@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameRun : MonoBehaviour
 {
@@ -26,7 +27,8 @@ public class GameRun : MonoBehaviour
 	private float RWD_HAND_WON       =  1.0f;
 
 	// Other UI elements
-	private UnityEngine.UI.Text textDeck;
+	private TextMeshPro textDeck;
+    private TextMeshPro textAction;
 
     // Start is called before the first frame update
     void Start()
@@ -46,7 +48,8 @@ public class GameRun : MonoBehaviour
         ///////////////////////////////////////
         // UI management
         ///////////////////////////////////////
-        textDeck = GameObject.Find("TextDeck").GetComponent<UnityEngine.UI.Text>();
+        textDeck = GameObject.Find("TextDeck").GetComponent<TextMeshPro>();
+        textAction = GameObject.Find("TextAction").GetComponent<TextMeshPro>();
 
 
         ///////////////////////////////////////
@@ -69,12 +72,12 @@ public class GameRun : MonoBehaviour
         ///////////////////////////////////////
         // Image generation
         ///////////////////////////////////////
-    	//renderTexture = gameObject.GetComponent<Camera>().targetTexture;
+        //renderTexture = gameObject.GetComponent<Camera>().targetTexture;
 
-    	//imgWidth  = renderTexture.width;
-    	//imgHeight = renderTexture.height;
+        //imgWidth = renderTexture.width;
+        //imgHeight = renderTexture.height;
 
-        
+
     }
 
 
@@ -82,7 +85,6 @@ public class GameRun : MonoBehaviour
     // Return the label (0-2) of the card
     private int GenerateCard(Transform parent)
     {
-
     	int idx = Random.Range(0, backgrounds.Length);
     	Instantiate(backgrounds[idx], parent.position, Quaternion.identity, parent);
 
@@ -142,9 +144,9 @@ public class GameRun : MonoBehaviour
 
 	        int [] action = agent.Play(deck, enemyChars);
 
-	        textDeck.text += " Action:";
+	        textAction.text = "Action: ";
 	        foreach(int a in action)
-	        	textDeck.text += a.ToString() + "/";
+	        	textAction.text += a.ToString() + "/";
 
 
 
