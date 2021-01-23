@@ -13,6 +13,7 @@ public class GameRun : MonoBehaviour
 
 	// Game management
 	private GameObject enemyCards;
+    private GameObject playerCards;
 	private int [] enemyChars;	
 	private Agent agent;
 
@@ -77,6 +78,8 @@ public class GameRun : MonoBehaviour
         //imgWidth = renderTexture.width;
         //imgHeight = renderTexture.height;
 
+        playerCards = GameObject.Find("PlayerCards");
+
 
     }
 
@@ -103,7 +106,37 @@ public class GameRun : MonoBehaviour
    	  	else if(chars[idx].name.StartsWith("opossum")) label = 2;
 
     	return label;
-    } 
+    }
+
+    private void GenerateCardofClass(Transform parent, int type)
+    {
+        int idx = Random.Range(0, backgrounds.Length);
+        Instantiate(backgrounds[idx], parent.position, Quaternion.identity, parent);
+
+
+        idx = Random.Range(0, props.Length);
+        Vector3 position = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), -1.0f);
+        Instantiate(props[idx], parent.position + position, Quaternion.identity, parent);
+
+        if(type == 0)
+        {
+            idx = Random.Range(0, 5);
+            position = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), -2.0f);
+            Instantiate(chars[idx], parent.position + position, Quaternion.identity, parent);
+        }
+        else if (type == 1)
+        {
+            idx = Random.Range(6, 11);
+            position = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), -2.0f);
+            Instantiate(chars[idx], parent.position + position, Quaternion.identity, parent);
+        }
+        else if (type == 2)
+        {
+            idx = Random.Range(12, 17);
+            position = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), -2.0f);
+            Instantiate(chars[idx], parent.position + position, Quaternion.identity, parent);
+        }
+    }
 
     // Generate another turn
     IEnumerator GenerateTurn()
@@ -144,17 +177,28 @@ public class GameRun : MonoBehaviour
 
 	        int [] action = agent.Play(deck, enemyChars);
 
-	        textAction.text = "Action: ";
+            int i = 0;
+            foreach (Transform card in playerCards.transform)
+            {
+                foreach (Transform sprite in card)
+                {
+                    Destroy(sprite.gameObject);
+                }
+                GenerateCardofClass(card, action[i]);
+                i++;
+            }
+
+            textAction.text = "Action: ";
 	        foreach(int a in action)
 	        	textAction.text += a.ToString() + "/";
 
+           
 
 
-
-	        ///////////////////////////////////////
-	        // Compute reward
-	        ///////////////////////////////////////
-	        float reward = ComputeReward(deck, action);
+            ///////////////////////////////////////
+            // Compute reward
+            ///////////////////////////////////////
+            float reward = ComputeReward(deck, action);
 	        
 	        Debug.Log("Turn/reward: " + turn.ToString() + "->" + reward.ToString());
 
