@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Barracuda;
+using TMPro;
+
 
 public class Agent : MonoBehaviour
 {
@@ -46,6 +48,9 @@ public class Agent : MonoBehaviour
 	private int coolingSteps = 1000;
 
 
+    bool agentState = false;
+
+
 
 	// Not using Start() so we are positive that this is run before the agent is asked to play
     public void Initialize()
@@ -79,7 +84,7 @@ public class Agent : MonoBehaviour
     // Play one turn
     // deck: the cards the player has to play with
     // enemyChars: the labels of the enemy's characters (for debug/evaluation purposes only)
-    public int [] Play(int [] deck, int [] enemyChars) 
+    public int [] Play(int [] deck, int [] enemyChars, TextMeshPro text) 
     {
     	// First: read the enemy cards
 
@@ -104,7 +109,7 @@ public class Agent : MonoBehaviour
     	state    = ComputeState(enemyCards);
 
     	// Third: choose an action
-    	action = ChooseAction();
+    	action = ChooseAction(text);
 
     	//Debug.Log("ACTION");
     	//Debug.Log(action);
@@ -216,7 +221,7 @@ public class Agent : MonoBehaviour
     }
 
 
-    private int ChooseAction()
+    private int ChooseAction(TextMeshPro text)
     {
     	int action; 
 
@@ -224,11 +229,23 @@ public class Agent : MonoBehaviour
 		// according to Q table
 		if (Random.Range (0.0f, 1.0f) < epsilon) 	// Random action
 		{
-			// Random.Range with ints does not include the maximum
-			action = Random.Range (0, numActions);		
+            if (agentState)
+            {
+                text.text = "Gathering\nData";
+                agentState = false;
+            }
+
+            // Random.Range with ints does not include the maximum
+            action = Random.Range (0, numActions);		
 		} 
 		else 	// Best action according to Q-table (column with highest value)
 		{
+            if(!agentState)
+            {
+                text.text = "Using\nqTable";
+                agentState = true;
+            }
+
 			int colMax = 0;
 			for (int col = 1; col < numActions; col++)
 				if (qTable [state, col] > qTable [state, colMax])

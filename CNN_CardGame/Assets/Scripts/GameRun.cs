@@ -22,7 +22,7 @@ public class GameRun : MonoBehaviour
 	private int DECK_SIZE       = 4;
 
 	// Rewards
-	private float RWD_ACTION_INVALID = -2.0f;
+	private float RWD_ACTION_INVALID = -5.0f;
 	private float RWD_HAND_LOST      = -1.0f;
 	private float RWD_TIE            = -0.1f;
 	private float RWD_HAND_WON       =  1.0f;
@@ -30,6 +30,7 @@ public class GameRun : MonoBehaviour
 	// Other UI elements
 	private TextMeshPro textDeck;
     private TextMeshPro textAction;
+    private TextMeshPro textAgentState;
 
     // Start is called before the first frame update
     void Start()
@@ -51,6 +52,7 @@ public class GameRun : MonoBehaviour
         ///////////////////////////////////////
         textDeck = GameObject.Find("TextDeck").GetComponent<TextMeshPro>();
         textAction = GameObject.Find("TextAction").GetComponent<TextMeshPro>();
+        textAgentState = GameObject.Find("TextAgent").GetComponent<TextMeshPro>();
 
 
         ///////////////////////////////////////
@@ -175,7 +177,7 @@ public class GameRun : MonoBehaviour
 	        //            the newly generated cards (otherwise it will see the previous ones)
 	        yield return new WaitForEndOfFrame();
 
-	        int [] action = agent.Play(deck, enemyChars);
+	        int [] action = agent.Play(deck, enemyChars, textAgentState);
 
             int i = 0;
             foreach (Transform card in playerCards.transform)
