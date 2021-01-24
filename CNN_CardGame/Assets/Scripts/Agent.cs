@@ -95,7 +95,7 @@ public class Agent : MonoBehaviour
     	{
     		enemyCards[i] = ClassifyCard(renderTextures[i]);
 
-    		//Debug.Log("Agent.Play - classified card: " + enemyCards[i].ToString() + " -> " + enemyChars[i].ToString());
+    		Debug.Log("Agent.Play - classified card: " + enemyCards[i].ToString() + " -> " + enemyChars[i].ToString());
     	}
 
 

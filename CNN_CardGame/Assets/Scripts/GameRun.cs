@@ -22,15 +22,32 @@ public class GameRun : MonoBehaviour
 	private int DECK_SIZE       = 4;
 
 	// Rewards
-	private float RWD_ACTION_INVALID = -5.0f;
+	private float RWD_ACTION_INVALID = -2.0f;
 	private float RWD_HAND_LOST      = -1.0f;
 	private float RWD_TIE            = -0.1f;
 	private float RWD_HAND_WON       =  1.0f;
+
+    //Counters
+    private int WINS = 0;
+    private int TIES = 0;
+    private int LOSSES = 0;
+    private int INVALIDS = 0;
+    private int PLAYER_WINS = 0;
+    private int ENEMY_WINS = 0;
+    private int GAMES = 0;
 
 	// Other UI elements
 	private TextMeshPro textDeck;
     private TextMeshPro textAction;
     private TextMeshPro textAgentState;
+    private TextMeshPro textTurn;
+    private TextMeshPro textWin;
+    private TextMeshPro textTie;
+    private TextMeshPro textLose;
+    private TextMeshPro textInvalid;
+    private TextMeshPro textGame;
+    private TextMeshPro textWinsEnemy;
+    private TextMeshPro textWinsPlayer;
 
     // Start is called before the first frame update
     void Start()
@@ -53,7 +70,14 @@ public class GameRun : MonoBehaviour
         textDeck = GameObject.Find("TextDeck").GetComponent<TextMeshPro>();
         textAction = GameObject.Find("TextAction").GetComponent<TextMeshPro>();
         textAgentState = GameObject.Find("TextAgent").GetComponent<TextMeshPro>();
-
+        textTurn = GameObject.Find("TextTurn").GetComponent<TextMeshPro>();
+        textWin = GameObject.Find("TextWin").GetComponent<TextMeshPro>();
+        textTie = GameObject.Find("TextTie").GetComponent<TextMeshPro>();
+        textLose = GameObject.Find("TextLose").GetComponent<TextMeshPro>();
+        textInvalid = GameObject.Find("TextInvalid").GetComponent<TextMeshPro>();
+        textGame = GameObject.Find("TextGame").GetComponent<TextMeshPro>();
+        textWinsPlayer = GameObject.Find("TextWinsPlayer").GetComponent<TextMeshPro>();
+        textWinsEnemy = GameObject.Find("TextWinsEnemy").GetComponent<TextMeshPro>();
 
         ///////////////////////////////////////
         // Game management
@@ -201,19 +225,66 @@ public class GameRun : MonoBehaviour
             // Compute reward
             ///////////////////////////////////////
             float reward = ComputeReward(deck, action);
-	        
-	        Debug.Log("Turn/reward: " + turn.ToString() + "->" + reward.ToString());
 
-	        agent.GetReward(reward);
+            
 
+            Debug.Log("Turn/reward: " + turn.ToString() + "->" + reward.ToString());
+            
 
-	        ///////////////////////////////////////
-	        // Manage turns/games
-	        ///////////////////////////////////////
+            agent.GetReward(reward);
 
 
+            ///////////////////////////////////////
+            // Manage turns/games
+            ///////////////////////////////////////
 
-	    	yield return new WaitForSeconds(0.1f);
+
+            if (turn % 15 + 1 == 1)
+            {
+                if(WINS > LOSSES + INVALIDS)
+                {
+                    PLAYER_WINS++;
+                }
+                else if(LOSSES + INVALIDS > WINS)
+                {
+                    ENEMY_WINS++;
+                }
+
+                WINS = 0;
+                LOSSES = 0;
+                TIES = 0;
+                INVALIDS = 0;
+                GAMES++;
+            }
+
+            if (reward == RWD_HAND_WON)
+            {
+                WINS++;
+            }
+            if (reward == RWD_HAND_LOST)
+            {
+                LOSSES++;
+            }
+            if (reward == RWD_TIE)
+            {
+                TIES++;
+            }
+            if (reward == RWD_ACTION_INVALID)
+            {
+                INVALIDS++;
+            }
+
+            textTurn.text = "R: " + (turn % 15 + 1).ToString();
+            textWin.text = "W: " + WINS.ToString();
+            textTie.text = "T: " + TIES.ToString();
+            textLose.text = "L: " + LOSSES.ToString();
+            textInvalid.text = "I: " + INVALIDS.ToString();
+            textGame.text = "G: " + GAMES.ToString();
+            textWinsEnemy.text = ENEMY_WINS.ToString();
+            textWinsPlayer.text = PLAYER_WINS.ToString();
+
+
+            yield return new WaitForSeconds(0.1f);
 
     	}
 
